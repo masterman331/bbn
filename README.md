@@ -1,4 +1,4 @@
-# 🗞️ BBN - Big Bullshit News
+# BBN - Big Bullshit News
 
 **The most believable fake news generator you'll ever need.**
 
