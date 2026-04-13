@@ -1,0 +1,345 @@
+/* BBN Animations - Separate file for easy access */
+
+/* ===== KEYFRAMES ===== */
+
+/* Fade in from bottom */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in from left */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade in from right */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale in */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse glow */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 45, 85, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 45, 85, 0.6);
+  }
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Scanline sweep */
+@keyframes scanline {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Gradient shift */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Typewriter cursor blink */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Rotate in */
+@keyframes rotateIn {
+  from {
+    opacity: 0;
+    transform: rotate(-10deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
+
+/* ===== ANIMATION CLASSES ===== */
+
+/* Article cards - staggered fade in */
+.article-card {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.article-card:nth-child(1) { animation-delay: 0.1s; }
+.article-card:nth-child(2) { animation-delay: 0.2s; }
+.article-card:nth-child(3) { animation-delay: 0.3s; }
+.article-card:nth-child(4) { animation-delay: 0.4s; }
+.article-card:nth-child(5) { animation-delay: 0.5s; }
+.article-card:nth-child(6) { animation-delay: 0.6s; }
+.article-card:nth-child(7) { animation-delay: 0.7s; }
+.article-card:nth-child(8) { animation-delay: 0.8s; }
+.article-card:nth-child(9) { animation-delay: 0.9s; }
+.article-card:nth-child(10) { animation-delay: 1.0s; }
+.article-card:nth-child(11) { animation-delay: 1.1s; }
+.article-card:nth-child(12) { animation-delay: 1.2s; }
+
+/* Breaking news - scale in */
+.breaking-news {
+  animation: scaleIn 0.5s ease forwards;
+}
+
+/* Logo - float effect */
+.logo-bbn {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Category filters - no initial animation to avoid display issues */
+/* Animation only on hover, handled in style.css */
+
+/* Trending items - slide in from right */
+.sidebar li {
+  opacity: 0;
+  animation: fadeInRight 0.4s ease forwards;
+}
+
+.sidebar li:nth-child(1) { animation-delay: 0.2s; }
+.sidebar li:nth-child(2) { animation-delay: 0.3s; }
+.sidebar li:nth-child(3) { animation-delay: 0.4s; }
+.sidebar li:nth-child(4) { animation-delay: 0.5s; }
+.sidebar li:nth-child(5) { animation-delay: 0.6s; }
+
+/* Article page - content reveal */
+.article-page {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.article-page .category {
+  animation: rotateIn 0.5s ease forwards;
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.article-page h1 {
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.article-page .subheadline {
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.article-page .meta {
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+.article-page .article-main-image {
+  animation: scaleIn 0.6s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+.article-page .content p,
+.article-page .content blockquote {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.article-page .content p:nth-child(1) { animation-delay: 0.6s; }
+.article-page .content p:nth-child(2) { animation-delay: 0.7s; }
+.article-page .content p:nth-child(3) { animation-delay: 0.8s; }
+.article-page .content p:nth-child(4) { animation-delay: 0.9s; }
+.article-page .content p:nth-child(5) { animation-delay: 1.0s; }
+.article-page .content p:nth-child(6) { animation-delay: 1.1s; }
+.article-page .content p:nth-child(7) { animation-delay: 1.2s; }
+.article-page .content p:nth-child(8) { animation-delay: 1.3s; }
+.article-page .content p:nth-child(9) { animation-delay: 1.4s; }
+.article-page .content p:nth-child(10) { animation-delay: 1.5s; }
+
+/* ===== HOVER ENHANCEMENTS ===== */
+
+/* Card hover lift with shadow */
+.article-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* Button hover effects */
+.category-filter {
+  transition: all 0.3s ease;
+}
+
+.category-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 45, 85, 0.3);
+}
+
+.category-filter.active {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Link hover underline effect */
+.article-card h3 {
+  position: relative;
+  display: inline-block;
+}
+
+.article-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff2d55, #ffd60a);
+  transition: width 0.3s ease;
+}
+
+.article-card:hover h3::after {
+  width: 100%;
+}
+
+/* ===== SPECIAL EFFECTS ===== */
+
+/* Breaking news shimmer border */
+.breaking-news::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #ff2d55, #ffd60a, #00d4aa, transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Logo text gradient animation */
+.logo-bbn {
+  background-size: 200% auto;
+  animation: float 6s ease-in-out infinite, gradientShift 4s ease infinite;
+}
+
+/* Trending number pulse */
+.trend-num {
+  transition: transform 0.2s ease;
+}
+
+.sidebar li:hover .trend-num {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Image zoom on hover */
+.article-image {
+  transition: transform 0.5s ease;
+}
+
+.article-card:hover .article-image {
+  transform: scale(1.1);
+}
+
+/* ===== LOADING STATES ===== */
+
+.loading-pulse {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease infinite;
+}
+
+/* ===== RESPONSIVE ANIMATIONS ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .article-card {
+    animation-duration: 0.4s;
+  }
+  
+  .article-card:nth-child(n+5) {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+.env
+data/articles/*.json
+data/images/*.jpg
+data/images/*.png

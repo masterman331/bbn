@@ -1,0 +1,17 @@
+{
+  "name": "bbn-big-bullshit-news",
+  "version": "1.0.0",
+  "description": "Big Bullshit News - The most believable fake news generator",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "generate": "node cli/generate.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "chokidar": "^3.5.3",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.0"
+  }
+}

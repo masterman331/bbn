@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBN - Big Bullshit News</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="container">
+      <span class="date" id="currentDate"></span>
+      <span class="tagline">Most Trusted Source for Alternative Facts</span>
+    </div>
+  </header>
+
+  <nav class="main-nav">
+    <div class="container">
+      <a href="/" class="logo">
+        <span class="logo-bbn">BBN</span>
+        <span class="logo-text">Big Bullshit News</span>
+      </a>
+      <div class="search-container">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Search articles...">
+        </div>
+        <div class="category-filters" id="categoryFilters">
+          <button class="category-filter active" data-category="all">All</button>
+          <button class="category-filter" data-category="politics">Politics</button>
+          <button class="category-filter" data-category="science">Science</button>
+          <button class="category-filter" data-category="health">Health</button>
+          <button class="category-filter" data-category="business">Business</button>
+          <button class="category-filter" data-category="world">World</button>
+          <button class="category-filter" data-category="opinion">Opinion</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="breaking-news" id="breakingNews">
+      <h2>🚨 BREAKING NEWS</h2>
+      <div class="breaking-content" id="breakingContent"></div>
+    </section>
+
+    <div class="main-content">
+      <section class="featured">
+        <h2>Top Stories <span id="resultCount"></span></h2>
+        <div class="articles-grid" id="mainArticles"></div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="trending">
+          <h2>🔥 Trending</h2>
+          <ul id="trendingList"></ul>
+        </div>
+        <div class="most-viewed">
+          <h2>👁 Most Viewed</h2>
+          <ul id="mostViewedList"></ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 BBN - Big Bullshit News. All stories are completely fictional.</p>
+      <p class="disclaimer">This is a satire/parody website. Nothing here is real. Please don't sue us.</p>
+    </div>
+  </footer>
+
+  <script>
+    let allArticles = [];
+    let currentCategory = 'all';
+    let searchQuery = '';
+
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    function getImageUrl(imageData, width, height, seed) {
+      if (imageData?.url?.startsWith('/images/')) return imageData.url;
+      const id = seed || Math.floor(Math.random() * 1000);
+      return `https://picsum.photos/id/${id}/${width}/${height}`;
+    }
+
+    function getURLParams() {
+      const params = new URLSearchParams(window.location.search);
+      return { search: params.get('search') || '', category: params.get('category') || 'all' };
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set('search', searchQuery);
+      if (currentCategory !== 'all') params.set('category', currentCategory);
+      const newURL = params.toString() ? `?${params.toString()}` : window.location.pathname;
+      window.history.replaceState({}, '', newURL);
+    }
+
+    async function loadArticles() {
+      try {
+        const response = await fetch('/api/articles');
+        allArticles = await response.json();
+
+        const params = getURLParams();
+        if (params.search) {
+          searchQuery = params.search;
+          document.getElementById('searchInput').value = searchQuery;
+        }
+        if (params.category && params.category !== 'all') {
+          currentCategory = params.category;
+          document.querySelectorAll('.category-filter').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.category === currentCategory);
+          });
+        }
+
+        renderArticles();
+        renderTrending();
+      } catch (error) {
+        document.getElementById('mainArticles').innerHTML = '<p class="no-results">Error loading articles. Make sure the server is running.</p>';
+      }
+    }
+
+    function renderArticles() {
+      let filtered = [...allArticles];
+
+      if (currentCategory !== 'all') {
+        filtered = filtered.filter(a => (a.category || 'news').toLowerCase() === currentCategory.toLowerCase());
+      }
+
+      if (searchQuery?.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        filtered = filtered.filter(a =>
+          (a.headline || '').toLowerCase().includes(query) ||
+          (a.subheadline || '').toLowerCase().includes(query) ||
+          (a.content || '').toLowerCase().includes(query) ||
+          (a.author || '').toLowerCase().includes(query)
+        );
+      }
+
+      const countEl = document.getElementById('resultCount');
+      countEl.textContent = (searchQuery || currentCategory !== 'all') ? `(${filtered.length})` : '';
+
+      const breakingSection = document.getElementById('breakingNews');
+      if (currentCategory === 'all' && !searchQuery && allArticles.length > 0) {
+        const breaking = allArticles[0];
+        const imgSeed = parseInt(breaking.id, 36) % 1000;
+        const imgUrl = getImageUrl(breaking.images?.[0], 400, 200, imgSeed);
+        document.getElementById('breakingContent').innerHTML = `
+          <a href="/article/${breaking.id}">
+            <div class="breaking-image" style="background-image: url('${imgUrl}')"></div>
+            <div>
+              <h3>${breaking.headline}</h3>
+              <p>${breaking.subheadline || ''}</p>
+            </div>
+          </a>
+        `;
+        breakingSection.style.display = 'block';
+      } else {
+        breakingSection.style.display = 'none';
+      }
+
+      if (filtered.length === 0) {
+        const msg = searchQuery ? `No articles found for "${searchQuery}"` : `No articles in ${currentCategory}`;
+        document.getElementById('mainArticles').innerHTML = `<p class="no-results">${msg}</p>`;
+        return;
+      }
+
+      const mainHTML = filtered.slice(0, 15).map((article, i) => {
+        const imgSeed = parseInt(article.id, 36) % 1000;
+        const imgUrl = getImageUrl(article.images?.[0], 400, 220, imgSeed);
+        const delay = Math.min(i * 0.05, 0.5);
+        return `
+          <article class="article-card" style="animation-delay: ${delay}s">
+            <div class="article-image" style="background-image: url('${imgUrl}')"></div>
+            <div class="article-content">
+              <span class="category">${article.category || 'news'}</span>
+              <a href="/article/${article.id}"><h3>${article.headline}</h3></a>
+              <p class="article-meta">${article.author || 'BBN Staff'} • ${formatDate(article.createdAt)}</p>
+              <span class="views">👁 ${article.views || 0}</span>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      document.getElementById('mainArticles').innerHTML = mainHTML;
+    }
+
+    function renderTrending() {
+      const trending = allArticles.filter(a => a.views > 0).sort((a, b) => b.views - a.views).slice(0, 5);
+      const html = trending.map((a, i) => `
+        <li><span class="trend-num">${i + 1}</span><a href="/article/${a.id}">${a.headline}</a></li>
+      `).join('');
+      const fallback = '<li style="color:var(--text-muted);font-size:12px">No trending articles yet</li>';
+      document.getElementById('trendingList').innerHTML = html || fallback;
+      document.getElementById('mostViewedList').innerHTML = html || fallback;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'Recently';
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    document.getElementById('categoryFilters').addEventListener('click', (e) => {
+      if (e.target.classList.contains('category-filter')) {
+        document.querySelectorAll('.category-filter').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        currentCategory = e.target.dataset.category;
+        updateURL();
+        renderArticles();
+      }
+    });
+
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchQuery = e.target.value;
+        updateURL();
+        renderArticles();
+      }, 200);
+    });
+
+    loadArticles();
+  </script>
+</body>
+</html>

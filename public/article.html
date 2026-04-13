@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article - BBN</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="container">
+      <span class="date" id="currentDate"></span>
+      <span class="tagline">Most Trusted Source for Alternative Facts</span>
+    </div>
+  </header>
+
+  <nav class="main-nav">
+    <div class="container">
+      <a href="/" class="logo">
+        <span class="logo-bbn">BBN</span>
+        <span class="logo-text">Big Bullshit News</span>
+      </a>
+      <div class="search-container">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Search articles...">
+        </div>
+        <div class="category-filters">
+          <a href="/"><button class="category-filter">Back to Home</button></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <article class="article-page" id="articleContent">
+      <p style="text-align:center;padding:40px;color:var(--text-muted)">Loading article...</p>
+    </article>
+
+    <section class="related-articles" id="relatedSection" style="display:none">
+      <h2>📰 You Might Also Like</h2>
+      <div class="related-grid" id="relatedArticles"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 BBN - Big Bullshit News. All stories are completely fictional.</p>
+      <p class="disclaimer">This is a satire/parody website. Nothing here is real.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        window.location.href = `/?search=${encodeURIComponent(e.target.value.trim())}`;
+      }
+    });
+
+    function getImageUrl(imageData, width, height) {
+      if (imageData?.url?.startsWith('/images/')) return imageData.url;
+      return `https://picsum.photos/${width}/${height}?random=${Math.random()}`;
+    }
+
+    let allArticles = [];
+
+    async function loadArticle() {
+      const articleId = window.location.pathname.split('/')[2];
+      if (!articleId) {
+        document.getElementById('articleContent').innerHTML = '<p class="no-results">Article not found</p>';
+        return;
+      }
+
+      try {
+        // Load all articles for related section
+        const allRes = await fetch('/api/articles');
+        allArticles = await allRes.json();
+
+        await fetch(`/api/article/${articleId}/view`, { method: 'POST' });
+        const response = await fetch(`/api/article/${articleId}`);
+        if (!response.ok) throw new Error('Not found');
+
+        const article = await response.json();
+        document.title = `${article.headline} - BBN`;
+
+        let content = article.content || '';
+        const images = article.images || [];
+        const bodyImages = images.filter(img => !img.isTitle && img.url);
+
+        let imageIndex = 0;
+        content = content.replace(/\[IMAGE\]/g, () => {
+          if (imageIndex < bodyImages.length) {
+            const img = bodyImages[imageIndex];
+            const imgUrl = getImageUrl(img, 800, 400);
+            imageIndex++;
+            return `<img src="${imgUrl}" alt="${img.keyword || 'Article image'}" class="article-body-image">`;
+          }
+          return '';
+        });
+
+        const paragraphs = content.split('\n\n').filter(p => p.trim()).map(p => {
+          if (p.startsWith('<img')) return p;
+          if (p.startsWith('"') && p.endsWith('"')) return `<blockquote>${p}</blockquote>`;
+          if (p.includes('said') && p.length < 250) return `<blockquote>${p}</blockquote>`;
+          return `<p>${p}</p>`;
+        }).join('');
+
+        const mainImgUrl = getImageUrl(images[0], 1200, 500);
+
+        document.getElementById('articleContent').innerHTML = `
+          <span class="category">${article.category || 'news'}</span>
+          <h1>${article.headline}</h1>
+          <p class="subheadline">${article.subheadline || ''}</p>
+          <p class="meta">By <strong>${article.author || 'BBN Staff'}</strong> • ${formatDate(article.createdAt)} • 👁 <span id="viewCount">${article.views || 0}</span> views</p>
+          <img src="${mainImgUrl}" alt="Article image" class="article-main-image">
+          <div class="content">${paragraphs}</div>
+        `;
+
+        // Load related articles
+        loadRelatedArticles(article);
+
+      } catch (error) {
+        document.getElementById('articleContent').innerHTML = `
+          <div class="no-results">
+            <h3>Article not found</h3>
+            <p><a href="/">← Back to Home</a></p>
+          </div>
+        `;
+      }
+    }
+
+    function loadRelatedArticles(currentArticle) {
+      const currentCategory = currentArticle.category || 'news';
+
+      // Score articles by relevance
+      const scored = allArticles
+        .filter(a => a.id !== currentArticle.id)
+        .map(a => {
+          let score = 0;
+          if (a.category === currentCategory) score += 10;
+          if (a.topic && currentArticle.topic && a.topic === currentArticle.topic) score += 5;
+          score += (a.views || 0) * 0.01;
+          return { article: a, score };
+        })
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      if (scored.length === 0) return;
+
+      const html = scored.map((item, i) => {
+        const a = item.article;
+        const imgUrl = getImageUrl(a.images?.[0], 400, 220);
+        return `
+          <a href="/article/${a.id}" class="related-card" style="animation-delay: ${i * 0.1}s">
+            <div class="related-image" style="background-image: url('${imgUrl}')"></div>
+            <div class="related-content">
+              <span class="category small">${a.category || 'news'}</span>
+              <h3>${a.headline}</h3>
+              <span class="views">👁 ${a.views || 0}</span>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      document.getElementById('relatedArticles').innerHTML = html;
+      document.getElementById('relatedSection').style.display = 'block';
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'Recently';
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    loadArticle();
+  </script>
+</body>
+</html>
