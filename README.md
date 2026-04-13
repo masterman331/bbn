@@ -4,8 +4,6 @@
 
 Ever wanted to run your own satirical news empire? BBN uses local AI to generate completely ridiculous yet oddly convincing news articles with dramatic headlines, fake expert quotes, made-up studies, and auto-fetched images. Perfect for laughs, memes, pranks, or your next creative project.
 
-![BBN Homepage](https://raw.githubusercontent.com/masterman331/bbn/main/Pics/mainpage.png)
-
 ## ✨ Why BBN?
 
 We built BBN because we wanted something **local, private, and fun**. No cloud APIs, no monthly fees, no data leaving your machine. Just you, Ollama, and an endless stream of believable nonsense.
@@ -192,13 +190,13 @@ bbn/
 ├── 📁 data/
 │   ├── articles/       # JSON article files
 │   └── images/         # Downloaded images
-├── 📁 exports/         # Library bundles (.bbn)
+├── 📁 exports/
+│   └── demo.bbn        # Demo file
 ├── 📁 Pics/            # Screenshots for README
 ├── 📁 public/
 │   ├── index.html      # Homepage
 │   ├── article.html    # Article view
 │   └── style.css       # All styling
-├── .env                # Your API keys (don't share!)
 ├── .env.example        # Template for env vars
 ├── server.js           # Express server
 ├── imageFetcher.js     # Pixabay integration
@@ -343,9 +341,3 @@ This is a fun side project! Feel free to:
 ## 📄 License
 
 MIT - Do whatever you want. Just don't sue us and don't be evil.
-
----
-
-**Made with 🎭 for laughs. Now go generate some beautiful chaos!**
-
-*Star ⭐ the repo if this made you laugh!*
